@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漢字 Hànzì — Business Chinese</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="mainApp">
+  <div class="header">
+    <div class="header-left">
+      <a href="business.html" class="logo">漢字<span>Business</span></a>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="switch-btn">← Basic</a>
+      <div class="streak"><div class="streak-dot"></div><span class="streak-n" id="streakN">0</span><span class="streak-l">streak</span></div>
+      <button class="coll-btn" onclick="openCollection()">↩ <span id="collCount">0</span></button>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 10L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <input type="text" id="searchInput" class="search-input" placeholder="Search by character, pinyin, meaning, or phrase…" oninput="onSearch(this.value)">
+    <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none">✕</button>
+  </div>
+
+  <div id="searchResults" style="display:none"></div>
+
+  <div id="mainContent">
+    <div class="level-tabs" id="levelTabs"></div>
+    <div class="tabs">
+      <button class="tab on" onclick="setMode('learn')">Learn</button>
+      <button class="tab" onclick="setMode('write')">Write</button>
+      <button class="tab" onclick="setMode('flip')">Flashcard</button>
+      <button class="tab" onclick="setMode('quiz')">Quiz</button>
+    </div>
+
+    <div id="pLearn">
+      <div class="char-card biz-card" id="learnCard">
+        <div class="card-top-row">
+          <span class="level-badge biz-badge" id="lLevel">meeting</span>
+          <button class="review-btn" id="reviewBtn" onclick="toggleReview()">↩ Review later</button>
+        </div>
+        <div class="big-char" id="lCh" onclick="animChar()">会</div>
+        <div class="pin-row">
+          <span class="pinyin" id="lPin">huì</span>
+          <span class="tone-pill" id="lTone">Tone 4</span>
+        </div>
+        <div class="tone-hint" id="lHint">falling</div>
+        <div class="meaning" id="lMean">Meeting / can</div>
+        <div class="biz-phrase-box">
+          <div class="biz-phrase-lbl">Key phrase</div>
+          <div class="biz-phrase" id="lPhrase">开会</div>
+          <div class="biz-phrase-pin" id="lPhrasePin">kāihuì — Hold a meeting</div>
+        </div>
+        <div class="example">
+          <div class="ex-zh" id="lExZh">我们明天开会</div>
+          <div class="ex-en" id="lExEn">Wǒmen míngtiān kāihuì — We have a meeting tomorrow</div>
+        </div>
+        <div class="formal-tag" id="lFormal">Both written and spoken</div>
+      </div>
+      <button class="sound-btn" id="sndBtn" onclick="playSound()">
+        <div class="wave"><div class="wbar" id="wb1" style="height:4px"></div><div class="wbar" id="wb2" style="height:9px"></div><div class="wbar" id="wb3" style="height:14px"></div><div class="wbar" id="wb4" style="height:7px"></div><div class="wbar" id="wb5" style="height:11px"></div></div>
+        <span id="sndLbl">Hear it in Mandarin</span>
+      </button>
+      <div class="sec-lbl">Memory story</div>
+      <div class="story"><div class="story-tag">mnemonic</div><div class="story-text" id="storyTxt"></div></div>
+      <div class="nav"><button class="btn" onclick="go(-1)">← Back</button><button class="btn main" onclick="go(1)">Next →</button></div>
+    </div>
+
+    <div id="pWrite" style="display:none">
+      <div class="write-wrap">
+        <div class="card-top-row" style="margin-bottom:8px">
+          <span class="level-badge biz-badge" id="wLevel">meeting</span>
+          <button class="review-btn" id="reviewBtnW" onclick="toggleReview()">↩ Review later</button>
+        </div>
+        <div style="text-align:center;margin-bottom:6px">
+          <span class="pinyin" id="wPin" style="font-size:22px">huì</span>
+          <span class="tone-pill" id="wTone" style="margin-left:8px">Tone 4</span>
+        </div>
+        <div class="write-prompt">Trace or write the character</div>
+        <div class="canvas-container">
+          <canvas id="writeCanvas" width="240" height="240"></canvas>
+          <div class="canvas-ghost" id="ghostChar">会</div>
+        </div>
+        <div class="write-btns">
+          <button class="s-btn" onclick="clearCanvas()">Clear</button>
+          <button class="s-btn active" onclick="toggleGhost()" id="ghostBtn">Hide guide</button>
+        </div>
+      </div>
+      <div class="tip-box"><div class="tip-tag">stroke tip</div><div class="tip-text" id="writeTip"></div></div>
+      <div class="nav"><button class="btn" onclick="go(-1)">← Back</button><button class="btn main" onclick="go(1)">Next →</button></div>
+    </div>
+
+    <div id="pFlip" style="display:none">
+      <div class="flip-scene" onclick="doFlip()">
+        <div class="flip-inner" id="flipInner">
+          <div class="flip-face">
+            <div class="flip-q">What does this mean?</div>
+            <div class="flip-big" id="fCh">会</div>
+            <div class="flip-pin" id="fPin">huì</div>
+            <div class="flip-hint">tap to flip</div>
+          </div>
+          <div class="flip-face flip-back-face">
+            <div class="flip-back-mean" id="fMean">Meeting</div>
+            <div class="flip-back-ch" id="fCh2">会</div>
+            <div class="flip-back-pin" id="fPin2">huì</div>
+            <div class="flip-back-ex" id="fEx"></div>
+          </div>
+        </div>
+      </div>
+      <div class="nav" style="margin-top:4px"><button class="btn" onclick="fGo(-1)">← Back</button><button class="btn main" onclick="fGo(1)">Next →</button></div>
+    </div>
+
+    <div id="pQuiz" style="display:none">
+      <div class="quiz-stats">
+        <div class="stat"><div class="stat-n" id="qCor">0</div><div class="stat-l">correct</div></div>
+        <div class="stat"><div class="stat-n" id="qTot">0</div><div class="stat-l">answered</div></div>
+        <div class="stat"><div class="stat-n" id="qStr">0</div><div class="stat-l">streak</div></div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-ch" id="qCh">会</div>
+        <div class="quiz-pin" id="qPin">huì</div>
+      </div>
+      <div class="opts" id="optsGrid"></div>
+      <div class="feedback" id="qFb"></div>
+      <button class="btn main" style="width:100%" onclick="nextQ()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="collPage" style="display:none">
+  <div class="coll-page">
+    <div class="coll-header">
+      <button class="coll-back" onclick="closeCollection()">← Back</button>
+      <div><div class="coll-title">Review Later</div><div class="coll-subtitle" id="collSubtitle">0 characters</div></div>
+    </div>
+    <div id="collContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+<script>initApp('business');</script>
+</body>
+</html>
